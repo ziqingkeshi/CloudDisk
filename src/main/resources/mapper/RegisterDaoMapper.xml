@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yht.dao.RegisterDao">
+    <!--用户注册-->
+    <insert id="register" parameterType="user">
+        insert into t_account values (null,#{username},#{password},#{telephone},CURDATE(),1);
+    </insert>
+
+    <!--用户名查重-->
+    <select id="checkRepeat" resultType="String">
+        select username from t_account where username=#{username}
+    </select>
+
+    <!--手机号查重-->
+    <select id="checkRepeatPhone" resultType="String">
+        select telephone from t_account where telephone=#{telephone}
+    </select>
+</mapper>

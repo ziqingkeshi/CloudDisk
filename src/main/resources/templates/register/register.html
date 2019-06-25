@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册界面</title>
+    <style>
+        html, body, div, ul, li, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ol, form, input, textarea, th, td, select {
+            margin: 0;
+            padding: 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #232323;
+        }
+
+        #regTable tr, #regTable tr td, #regTable tr td input {
+            width: 336px;
+            height: 34px;
+        }
+
+        #regTable tr td input {
+            padding-left: 40px;
+            font-family: "Microsoft YaHei";
+        }
+
+        #subBtn {
+            height: 40px;
+            line-height: 40px;
+            width: 380px;
+            background-color: #22ac69;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 40px;
+        }
+
+        #sendMsg {
+            border-radius: 0;
+            border: 1px solid #ddd;
+            background: #f7f7f7;
+            color: #666;
+            font-weight: 400;
+            font-size: 14px;
+            padding: 8px 25px;
+        }
+
+        [id*="Span"] {
+            font-size: 12px;
+            color: #666666;
+        }
+
+        #subBtn {
+            outline: none;
+        }
+
+    </style>
+    <script src="/CloudDisk/webjars/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/CloudDisk/webjars/sweetalert2/7.28.10/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="/CloudDisk/webjars/sweetalert2/7.28.10/dist/sweetalert2.min.css">
+    <link rel="icon" type="image/x-icon" href="/CloudDisk/images/favicon.ico">
+</head>
+<body style="background-color: #f5f5f5">
+<div id="wrap" style="width: 1425px;height: 700px;">
+    <!--顶部导航栏-->
+    <div id="top-banner" style="height: 48px;width: 100%;padding: 10px 0px;background-color: #e8e8e8">
+        <div id="top-banner-content" style="width: 700px;height: 48px;margin: 0px 362.5px;">
+            <span style="line-height: 48px;font-size: 20px;font-family: Microsoft YaHei;">注册账号 <a
+                    href="/CloudDisk/user/toLogin" style="margin-left: 572px;">登录</a></span>
+        </div>
+    </div>
+    <!--中间form框-->
+    <div id="middle-form-banner"
+         style="background-color: white;width: 700px;height: 547px;margin: 70px 0px 362.5px 362.5px;position: relative">
+        <div style="width: 660px;height: 28px;padding: 20px;border-bottom:2px solid #f5f5f5;font-size: 20px;text-align: center;">
+            注册天天云盘账号
+        </div>
+        <div id="middle-form-content" style="width: 380px;height: 377px;padding: 50px 0px;margin: 0 auto;">
+            <form id="regForm" onsubmit="return false">
+                <table id="regTable">
+                    <tr>
+                        <td><input type="text" name="username" id="username" placeholder="请输入用户名" autocomplete="off"
+                                   required></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 20px; "><span id="usernameSpan"></span></td>
+                    </tr>
+                    <tr>
+                        <td><input type="password" name="password" id="password" placeholder="请输入密码" required></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 20px; "><span id="passwordSpan"></span></td>
+                    </tr>
+                    <tr>
+                        <td><input type="tel" name="telephone" id="telephone" placeholder="请输入手机号" required></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 20px; "><span id="telephoneSpan"></span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="vcode" id="vcode" placeholder="请输入验证码" style="width: 173px;"
+                                   required>
+                            <a href="javascript:invokeSettime('#sendMsg');" id="sendMsg"
+                               style="width: 170px;height:40px;margin-left: 10px;">获取验证码</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 20px; "><span id="vcodeSpan"></span></td>
+                    </tr>
+                </table>
+                <input type="button" value="注册" id="subBtn" onclick="register()"/>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    var flag = true; //是否可以提交的校验符
+    var tempVcode = '';//验证码
+    $("#username").focus(function () {
+        $("#usernameSpan").text('设置后不可更改，4到16位（字母，数字，下划线，减号）').css("color", "");
+    });
+
+    $("#username").blur(function () {
+        //用户名正则，4到16位（字母，数字，下划线，减号）
+        var uPattern1 = /^[a-zA-Z][a-zA-Z0-9]{4,16}$/;
+        if (uPattern1.test($("#username").val())) {
+            //用户名验重
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/CloudDisk/user/checkUserName",
+                async: false,
+                data: {
+                    "username": $("#username").val()
+                },
+                success: function (data) {
+                    if (data.msg=="fail"){
+                        $("#usernameSpan").text('该用户名已被注册，请重新输入').css("color", "red");
+                        flag = false;
+                    }else{
+                        $("#usernameSpan").text('');
+                        flag = true;
+                    }
+                }
+            });
+        } else {
+            flag = false;
+            $("#usernameSpan").text('用户名不符合规范，请重新输入').css("color", "red");
+        }
+
+    });
+    $("#password").focus(function () {
+        $("#passwordSpan").text('6-20个字母、数字、下划线 ，英文字母大小写加数字').css("color", "");
+    });
+
+    $("#password").blur(function () {
+        //密码正则，4到16位（字母，数字，下划线，减号）
+        var uPattern2 = /^(\w){6,20}$/;
+        if (uPattern2.test($("#password").val())) {
+            $("#passwordSpan").text('');
+            flag = true;
+        } else {
+            flag = false;
+            $("#passwordSpan").text('密码不符合规范，请重新输入').css("color", "red");
+        }
+    });
+    $("#telephone").focus(function () {
+        $("#telephoneSpan").text('请输入中国大陆手机号，可用于登录和找回密码，其他用户不可见').css("color", "");
+    });
+
+    $("#telephone").blur(function () {
+        var mPattern = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
+        if (mPattern.test($("#telephone").val())) {
+            //用户名验重
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/CloudDisk/user/checkPhone",
+                async: false,
+                data: {
+                    "telephone": $("#telephone").val()
+                },
+                success: function (data) {
+                    if (data.msg=="fail"){
+                        $("#telephoneSpan").text('该手机号已被注册，请重新输入').css("color", "red");
+                        flag = false;
+                    }else{
+                        $("#telephoneSpan").text('');
+                        flag = true;
+                    }
+                }
+            });
+        } else {
+            flag = false;
+            $("#telephoneSpan").text('手机号不符合规范，请重新输入').css("color", "red");
+        }
+    });
+    $("#vcode").focus(function () {
+        $("#vcodeSpan").text('');
+    });
+
+    $("#vcodeSpan").blur(function () {
+        $("#vcodeSpan").text('');
+    });
+
+
+    /**
+     * 设置发送验证码按钮倒计时
+     * @param obj
+     */
+
+    function invokeSettime(obj) {
+        var state = true;
+        $("#regTable input").not("#vcode").each(function () {
+            $(this).trigger("blur");
+            state = state && flag;
+        });
+        console.log("能不能发验证码："+state);
+        if(state) {
+            var countdown = 60;
+            settime(obj);
+
+            function settime(obj) {
+                if (countdown == 0) {
+                    $(obj).attr("href", "javascript:invokeSettime('#sendMsg');");
+                    $(obj).text("获取验证码");
+                    countdown = 60;
+                    return;
+                } else {
+                    $(obj).attr("href", "javascript:void(0);");
+                    $(obj).text(countdown + "s后重新发送");
+                    countdown--;
+                }
+                setTimeout(function () {
+                        settime(obj)
+                    }
+                    , 1000)
+            }
+
+            //将手机号发送至后台 发送短信
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/CloudDisk/user/sendMessage",
+                data: {
+                    "phone": $("#telephone").val()
+                },
+                success: function (data) {
+                    console.log(data.vcode);
+                    console.log("当前sessionId为："+data.sessionId);
+                    tempVcode = data.vcode;
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest.status);
+                    console.log(XMLHttpRequest.readyState);
+                    console.log(textStatus);
+                }
+            })
+        }
+    }
+
+    //注册方法
+    function register() {
+        var state2 = true;
+        //校验上面的数据合法性
+        $("#regTable input").not("#vcode").each(function () {
+            $(this).trigger("blur");
+            state2 = state2 && flag;
+        });
+        console.log("上面的校验是否通过："+state2);
+        if (state2) {
+            //如果上面信息正确 再校验验证码是否正确
+            if(tempVcode!=$("#vcode").val()){
+                $("#vcodeSpan").text('验证码错误，请重新输入!').css("color","red");
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                async: false, //同步执行 必须先核实验证码没有超时 再继续下面的注册流程
+                url: "/CloudDisk/user/hasVcode",
+                success: function (data) {
+                    if(data.msg=="success"){
+
+                        //执行注册方法 调用后台将信息存入数据库
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            url: "/CloudDisk/user/register",
+                            data: {
+                                "username": $("#username").val(),
+                                "password": $("#password").val(),
+                                "telephone": $("#telephone").val()
+                            },
+                            success: function (data) {
+                                if (data.msg == 'success') {
+                                    //注册成功
+                                    sweetAlert({
+                                        title: "恭喜您",
+                                        text: "注册成功！3秒后自动跳转登录页面",
+                                        timer: 3000,
+                                        type: "success",
+                                        showConfirmButton: false
+                                    }).then(function () {
+                                        location.href = "/CloudDisk/user/toLogin";
+                                    });
+                                } else {
+                                    //注册失败
+                                    sweetAlert({
+                                        title: "不高兴",
+                                        text: "注册出错了！",
+                                        type: "error"
+                                    });
+                                }
+                            }
+                        })
+                    }else if(data.msg=="fail"){
+                        $("#vcodeSpan").text('验证码超时，请重新发送!').css("color","red");
+                    }else{
+                        sweetAlert({
+                            title: "糟糕",
+                            text: "服务器繁忙！",
+                            type: "error"
+                        });
+                    }
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>天天云盘</title>
+    <style>
+        body {
+            margin:0;
+            padding:0;
+            background-image: url("/CloudDisk/images/girl.jpg");
+            font-family: "Microsoft YaHei", arial, SimSun, 宋体;
+        }
+
+        ul,li{
+            padding:0;
+            margin:0;
+            list-style:none
+        }
+
+        a{
+            text-decoration:none;
+            color:#333;
+        }
+
+        .el-header{
+            color: #333;
+            width: 100%;
+        }
+
+        .el-aside {
+            color: #333;
+            line-height: 704px;
+        }
+
+        .el-main {
+            background-color: white;
+            filter:alpha(opacity:80); opacity:0.8;  -moz-opacity:0.8;-khtml-opacity: 0.8;
+            color: #333;
+            width: 86%;
+        }
+
+        #aside_menu .el-menu{
+            background-color: unset;
+            border: 0;
+        }
+
+        #aside_menu .el-menu .el-menu-item{
+            background-color:#fcf3d9;
+            filter:alpha(opacity:80); opacity:0.8;  -moz-opacity:0.8;-khtml-opacity: 0.8;
+        }
+
+        #aside_menu .el-menu-item:hover{
+            background-color: #a5763d;
+            /*transform: rotate(180deg) scale(.5, .5);*/
+            /*background-color: #a5763d;*/
+            transition: background 2s ease, transform 2s ease-in 1s;
+            /*filter:alpha(opacity:50); opacity:0.5;  -moz-opacity:0.5;-khtml-opacity: 0.5;*/
+        }
+
+        #aside_menu .el-menu-item:focus{
+            background-color: #a5763d;
+        }
+
+        .spanColor{
+            color:#a5763d;
+        }
+
+        #myLogo:hover{
+            color: palevioletred;
+            transition: background 2s ease, transform 2s ease-in 1s;
+        }
+
+    </style>
+    <script src="/CloudDisk/webjars/jquery/3.3.1/jquery.min.js"></script>
+    <!--甜蜜弹窗js-->
+    <script src="/CloudDisk/webjars/sweetalert2/7.28.10/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="/CloudDisk/webjars/sweetalert2/7.28.10/dist/sweetalert2.min.css">
+    <!-- 引入样式 -->
+    <script type="text/javascript" src="/CloudDisk/webjars/vue/2.5.17/dist/vue.min.js"></script>
+    <script type="text/javascript" src="/CloudDisk/webjars/axios/0.19.0-beta.1/dist/axios.min.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="/CloudDisk/webjars/element-ui/2.7.0/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="/CloudDisk/webjars/qs/6.5.2/dist/qs.js"></script>
+    <!--引入qs 格式化axios传递的参数-->
+    <script src="/CloudDisk/webjars/element-ui/2.7.0/lib/index.js"></script>
+    <!--时间格式化插件-->
+    <script src="/CloudDisk/common/moment.min.js"></script>
+    <!--网站ico图标 小猪猪-->
+    <link rel="icon" type="image/x-icon" href="/CloudDisk/images/favicon.ico">
+</head>
+<body>
+<div id="wrapper">
+    <el-container>
+        <!--头部导航栏-->
+        <el-header height="62px">
+           <h1 style="font-weight: bold;display: inline-block;" id="myLogo">天天云盘</h1>
+            <el-button type="primary" size="small" @click="logout" style="margin-left: 1160px;">注销登录<i class="el-icon-back el-icon--right"></i></el-button>
+        </el-header>
+
+        <el-container>
+            <!--左部菜单栏-->
+            <el-aside width="194px">
+                <div id="aside_menu">
+                    <el-menu
+                            default-active="1"
+                            class="el-menu-vertical-one"
+                            text-color="#78564f"
+                            active-text-color="#000"
+                            @select="handleSelect">
+                        <el-menu-item index="1">
+                            <i class="el-icon-tickets"></i>
+                            <span slot="title">全部文件</span>
+                        </el-menu-item>
+                        <el-menu-item index="2">
+                            <i class="el-icon-picture-outline"></i>
+                           <span slot="title">图片</span>
+                        </el-menu-item>
+                        <el-menu-item index="3">
+                            <i class="el-icon-document"></i>
+                            <span slot="title">文档</span>
+                        </el-menu-item>
+                        <el-menu-item index="4">
+                            <i class="el-icon-view"></i>
+                            <span slot="title">视频</span>
+                        </el-menu-item>
+                        <el-menu-item index="5">
+                            <i class="el-icon-service"></i>
+                            <span slot="title">音乐</span>
+                        </el-menu-item>
+                        <el-menu-item index="6">
+                            <i class="el-icon-more-outline"></i>
+                            <span slot="title">其他</span>
+                        </el-menu-item>
+                        <el-menu-item index="7">
+                            <i class="el-icon-delete"></i>
+                            <span slot="title">垃圾箱</span>
+                        </el-menu-item>
+                    </el-menu>
+                </div>
+            </el-aside>
+
+            <!--中部内容区-->
+            <el-main style="padding: 0px;height: 707px">
+
+                <!--中部的头部工具栏-->
+                <el-row style="padding-left: 30px;padding-top: 20px;">
+                    <!--<el-button type="success" size="small" @click="uploadBtn">上传<i class="el-icon-upload el-icon&#45;&#45;right"></i></el-button>-->
+                    <el-upload
+                            class="uploadfile"
+                            action=""
+                            :http-request='uploadFileMethod'
+                            :show-file-list="false"
+                            :before-upload="beforeUploadFile"
+                            style="display: inline;">
+                        <el-button size="small" type="success">点击上传<i class="el-icon-upload el-icon--right"></i></el-button>
+                    </el-upload>
+
+                    <el-button type="warning" size="small" @click="createFileBtn" v-if="isNewFolderShow" >新建文件夹<i class="el-icon-plus el-icon--right"></i></el-button>
+                    <el-button type="primary" size="small" @click="downloadBtn" v-if="isShow">下载<i class="el-icon-download el-icon--right"></i></el-button>
+                    <el-button type="danger" size="small" @click="deleteBtn" v-if="isShow">删除<i class="el-icon-delete el-icon--right"></i></el-button>
+                    <el-button type="info" size="small" @click="editNameBtn" v-if="isShowRenameBtn">重命名<i class="el-icon-edit el-icon--right"></i></el-button>
+                    <el-button type="info" size="small" @click="returnBtn" v-if="isShowReturnBtn">还原<i class="el-icon-refresh el-icon--right"></i></el-button>
+                </el-row>
+                <el-progress v-if="fileFlag" :text-inside="true" :stroke-width="18" :percentage="uploadPercent" :color="uploadStatus" :status="uploadStatus" style="margin-top: 30px"></el-progress>
+
+                <!--文件层级目录-->
+                <el-row v-if="isCatalogShow" style="padding-left: 30px;padding-top: 10px;padding-bottom: 5px;">
+                    <span @click="goBack" class="spanColor">返回上一级</span>  |  <span @click="goTop" class="spanColor">全部文件</span><span v-for="(item, index) in items">   >{{item}}</span>
+                </el-row>
+                <el-row v-else style="padding-left: 30px;padding-top: 10px;padding-bottom: 5px;">
+                    <span>全部文件</span>
+                </el-row>
+
+
+                <!--文件列表-->
+                <el-table
+                        ref="filesTable"
+                        :data="tableData"
+                        @selection-change="handleSelectionChange"
+                        @row-dblclick="handleChooseFile"
+                        :row-style="rowClass"
+                        style="width:100%;font-size:10px"
+                        @row-click="clickRow"
+                        size="small"
+                        >
+
+                    <el-table-column
+                            type="selection">
+                    </el-table-column>
+                    <el-table-column
+                            prop="fileName"
+                            label="文件名"
+                            show-overflow-tooltip
+                            sortable
+                            fit="true">
+                    </el-table-column>
+                    <el-table-column
+                            label="文件类型"
+                            sortable
+                            fit="true">
+                        <template slot-scope="scope">
+                            <el-tag :type="scope.row.typeName | typeFilter">{{scope.row.typeName}}</el-tag>
+                        </template>
+                    </el-table-column>
+                    <!--<el-table-column-->
+                            <!--prop="fileSize"-->
+                            <!--label="大小"-->
+                            <!--sortable-->
+                            <!--fit="true">-->
+                    <!--</el-table-column>-->
+                    <el-table-column
+                            prop="modifyDate"
+                            label="修改日期"
+                            :formatter="dateFormat"
+                            sortable
+                            fit="true">
+                    </el-table-column>
+                </el-table>
+                <!--底部分页-->
+                <div class="inline" style="text-align: center;margin-top: 13px">
+                    <el-pagination
+                            @size-change="pageSizeChange"
+                            @current-change="currentPageChange"
+                            :current-page="currentPage"
+                            :page-sizes="[10,20, 30, 40]"
+                            :page-size="pageSize"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="tableTotal">
+                    </el-pagination>
+                </div>
+
+
+            </el-main>
+        </el-container>
+
+    </el-container>
+
+    <el-dialog title="图片预览" width="40%" :visible.sync="dialogPictureVisible">
+        <div style="margin: 50px auto">
+            <center>
+                <img :src="url" style="width: 200px; height: 200px"/>
+            </center>
+        </div>
+    </el-dialog>
+
+</div>
+<script>
+    // new Vue().$mount('#wrapper');
+    var myApp = new Vue({
+        el: "#wrapper",
+        data: {
+            tableData: [],
+            tableTotal: 100,
+            pageSize: 10,
+            currentPage: 1,
+            parentId: 0, //父文件id
+            isDeleted: 0, //是否被移入垃圾箱
+            selectRow: [],
+            selectData: [],
+            isShow: false,//下载 删除按钮是否显示
+            isShowRenameBtn: false, // 重命名按钮是否显示
+            isNewFolderShow: true, //新建文件夹按钮是否显示
+            isShowReturnBtn: false, //还原文件按钮是否显示
+            isCatalogShow: false, //控制main部分的 目录层级是否显示
+            catalogFileIdStack: [0],//定义一个栈 用来存放 父文件的Id 的层级关系
+            catalogIdStack: [], //定义一个栈 用来存放 当前文件的父Id的层级关系
+            catalogNameStack: [], //目录的层级名称
+            items:[],  //当前所有文件的目录名
+            currentMenu:'',  //当前所在的菜单位置
+            uploadPercent: 0, //上传进度
+            fileFlag:false,  //上传进度条是否显示
+            uploadColor:'', //进度条的颜色
+            uploadStatus:'', //进度条的状态
+            dialogPictureVisible:false, //预览图片模态框是否显示
+            url:'', //预览图片的路径
+            fit:'' //图片适应方式
+        },
+        created: function () {
+            //在 then的内部不能使用Vue的实例化的this, 因为在内部 this 没有被绑定。
+            var _self = this;
+            var start = (this.currentPage - 1) * this.pageSize;
+            var end = this.pageSize;
+            var searchForm = {
+                'start': start,
+                'end': end,
+                'parentId': 0,//parentId为0 代表一级目录
+                'isDeleted': 0 //是否被移入垃圾箱标识符
+            };
+            axios.post('userFilesList', searchForm).then(function (res) {
+                _self.tableData = res.data.data;
+                _self.tableTotal = res.data.total;
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+        filters: {
+            // el-tag类型转换
+            typeFilter: function (status) {
+                const statusMap = {
+                    '文件夹': 'success', '图片': 'warning', '文档': 'info', '视频': 'danger', '音乐': 'info' , '其他': 'danger'
+                };
+                return statusMap[status]
+            }
+        },
+        methods: {
+            //左侧菜单栏事件
+            handleSelect(key, keyPath) {
+                //只有左侧菜单栏为全部文件时才允许新建文件夹
+                if(key!= 1){
+                    this.isNewFolderShow = false;//不是全部文件菜单时 不显示新建文件夹按钮
+                }
+                //根据点击的菜单不同进行数据显示切换
+                switch (key) {
+                    case '1'://全部文件
+                        this.isNewFolderShow = true; //点击全部文件菜单 显示新建文件夹按钮
+                        this.currentMenu='';//将当前菜单所在位置置空
+                        this.currentPage = 1;
+                        this.pageSize = 10;
+                        this.loadingData(0,'',0);
+                        break;
+                    case '2': //图片
+                        this.currentMenu=2;//将当前位置所在位置定位至图片菜单
+                        this.currentPage = 1;
+                        this.pageSize = 10;
+                        this.loadingData(0,2,0);
+                        break;
+                    case '3': //文档
+                        this.currentMenu=3;//将当前位置所在位置定位至文档菜单
+                        this.currentPage = 1;
+                        this.pageSize = 10;
+                        this.loadingData(0, 3, 0);
+                        break;
+                    case '4': //视频
+                        this.currentMenu=4;//将当前位置所在位置定位至视频菜单
+                        this.currentPage = 1;
+                        this.pageSize = 10;
+                        this.loadingData(0,4,0);
+                        break;
+                    case '5': //音乐
+                        this.currentMenu=5;//将当前位置所在位置定位至音乐菜单
+                        this.currentPage = 1;
+                        this.pageSize = 10;
+                        this.loadingData(0,5,0);
+                        break;
+                    case '6': //其他
+                        this.currentMenu=6;//将当前位置所在位置定位至其他菜单
+                        this.currentPage = 1;
+                        this.pageSize = 10;
+                        this.loadingData(0,6,0);
+                        break;
+                    case '7': //垃圾箱
+                        this.currentMenu=7;//将当前位置所在位置定位至垃圾箱菜单
+                        this.currentPage = 1;
+                        this.pageSize = 10;
+                        this.loadingData(0,'',1);
+                        break;
+                    default: //全部文件
+                        this.currentMenu='';//默认置空 加载全部文件
+                        this.currentPage = 1;
+                        this.pageSize = 10;
+                        this.loadingData(0,'',0);
+                }
+
+            },//时间格式化
+            dateFormat: function (row, column) {
+                var date = row[column.property];
+                if (date == undefined) {
+                    return "";
+                }
+                return moment(date).format("YYYY-MM-DD HH:mm:ss");
+            },
+            //数据重载
+            loadingData: function (parentId,fileType,isDeleted) {
+                var _this = this;  //很重要！！
+                var start = (_this.currentPage - 1) * _this.pageSize;
+                var end = _this.pageSize;
+                // console.log(start);
+                // console.log(end);
+                //console.log("被移入垃圾箱isDeleted"+_this.isDeleted);
+                var myData = {
+                    'start': start,
+                    'end': end,
+                    'parentId': parentId,
+                    'fileType': fileType,
+                    'isDeleted': isDeleted //是否被移入垃圾箱标识符
+                };
+                // console.log("parentId="+parentId);
+                // console.log("fileType="+fileType);
+                axios.post('userFilesList', myData)
+                    .then(function (res) {
+                        _this.tableData = res.data.data;
+                        _this.tableTotal = res.data.total;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            //分页大小修改事件
+            pageSizeChange: function (val) {
+                this.pageSize = val;
+                if(this.currentMenu==7){//垃圾箱专用
+                    this.loadingData(this.parentId,'',1);//重新加载数据
+                }else{
+                    // this.loadingData(this.parentId,this.currentMenu,0);//重新加载数据
+                    this.loadingData(this.catalogFileIdStack[this.catalogFileIdStack.length - 1],this.currentMenu,0);//重新加载数据
+                }
+            },
+            //当前页数修改事件
+            currentPageChange: function (val) {
+                //console.log("当前页码："+val);
+                this.currentPage = val;
+                if(this.currentMenu==7){//垃圾箱专用
+                    this.loadingData(this.parentId,'',1);//重新加载数据
+                }else{
+                    this.loadingData(this.parentId,this.currentMenu,0);//重新加载数据
+                }
+            },
+            //单行点击事件
+            clickRow(row, column, event) {
+                this.$refs.filesTable.toggleRowSelection(row, true);
+                // console.log(this.$refs.filesTable.toggleRowSelection(row));
+            },
+            //双击进入文件目录
+            handleChooseFile(row, column, event) {
+                //说明点击的是文件夹  只有文件夹才能进入 并且不能是回收站 回收站不能进入文件内
+                if(row.fileType=="1" && this.currentMenu!=7) {
+                    this.loadingData(row.fileId,'',0);
+                    this.catalogFileIdStack.push(row.fileId); //将当前文件的fileId压入栈中
+                    this.isCatalogShow = true; //让目录层级显示
+                    this.catalogIdStack.push(row.parentId);//定义一个栈 用来存放 目录的层级Id
+                    this.catalogNameStack.push(row.fileName);// 用来存放 目录的层级名
+                    if (this.catalogNameStack.length > 0) {
+                        //将目录的层级名栈放入items中进行遍历
+                        this.items = this.catalogNameStack;
+                    } else {
+                        this.items = [];
+                    }
+                }
+                if(row.fileType=="2" && this.currentMenu!=7){
+                    var _self = this;
+                    //console.log(row.fileId);
+                    var fileData = {
+                        "fileId":row.fileId
+                    };
+                    axios.post('showPicture', fileData ,{headers: {"Content-Type":"application/json;charset=UTF-8"}})
+                        .then(function (res) {
+                            console.log(res.data.remoteFileName);
+                            if(res.data.status=="200"){
+                                _self.url = "http://39.96.8.65/images/"+res.data.remoteFileName;
+                                // _self.url = "http://pic32.nipic.com/20130823/13339320_183302468194_2.jpg";
+                                _self.fit = "fill";
+                            }else{
+                                console.log("获取图片失败");
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                    //双击图片时弹出模态框进行图片预览
+                    this.dialogPictureVisible = true;
+                }
+            },
+            //返回上一级 即返回当前目录的parentId的目录
+            goBack: function () {
+                this.parent=this.catalogIdStack[this.catalogIdStack.length - 1];
+                //重载当前目录的parentId
+                this.loadingData(this.catalogIdStack[this.catalogIdStack.length - 1],this.currentMenu,0);
+                //返回上一级时 移除栈顶的fileId
+                this.catalogFileIdStack.pop();
+                //返回上一级时 移除栈顶的parentId
+                this.catalogIdStack.pop();
+                //返回上一级时 移除栈顶的fileName
+                this.catalogNameStack.pop();
+                //如果parentId=0 说明是一级目录
+                if (this.catalogIdStack.length <= 0) {
+                    //返回一级目录后隐藏头部返回菜单栏
+                    this.isCatalogShow = false;
+                }
+            },
+            //返回全部文件界面 即重载parentId=0的一级目录
+            goTop: function () {
+                this.loadingData(0,this.currentMenu,0);
+                //返回全部文件界面后置空fileId栈 以免影响再次点击
+                this.catalogFileIdStack = [0];
+                //返回全部文件界面后置空parentId栈 以免影响再次点击
+                this.catalogIdStack = [];
+                //返回全部文件界面后置空fileName栈 以免影响再次点击
+                this.catalogNameStack = [];
+                //返回一级目录后隐藏头部返回菜单栏
+                this.isCatalogShow = false;
+            },
+            //上传文件方法
+            uploadFileMethod(param) {
+                //让进度条显示
+                this.fileFlag = true;
+                //获取上传的文件对象
+                let fileObject = param.file;
+                let uploadFileData = new FormData();//FormData 对象的字段类型可以是 Blob, File, 或者 string: 如果它的字段类型不是Blob也不是File，则会被转换成字符串类.
+                //获取当前时间
+                var createFolderTime = moment().format("YYYY-MM-DD HH:mm:ss");
+                //添加要传的参数
+                uploadFileData.append("file", fileObject);//要上传的文件
+                uploadFileData.append("fileName", fileObject.name);//要上传的文件
+                uploadFileData.append("parentId",this.catalogFileIdStack[this.catalogFileIdStack.length - 1]);
+                uploadFileData.append("filePath",this.catalogFileIdStack.toString());
+                uploadFileData.append("uploadDate",createFolderTime);
+                uploadFileData.append("modifyDate",createFolderTime);
+                // console.log(uploadFileData.get("uploadDate"));
+                // console.log(uploadFileData.get("modifyDate"));
+                //获取progressEvent对象
+                var config = {
+                    onUploadProgress: progressEvent => {
+                        // console.log(progressEvent.loaded);
+                        // console.log(progressEvent);
+                        var complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
+                        this.uploadPercent = complete;
+                        // console.log(this.uploadPercent);
+                        //如果进度达到100%
+                        if(this.uploadPercent.toString()=="100%"){
+                            this.uploadColor = "#66FF40";
+                            this.uploadStatus = "success";
+                        }else{
+                            this.uploadColor = "#409EFF";
+                        }
+                    }
+                };
+                axios.post('fileUpload', uploadFileData, config,{ headers: { 'Content-Type': 'multipart/form-data' } })
+                    .then(response => {
+                        // console.log(response);
+                        if (response.data.status=="200") {
+                            //重载数据
+                            this.loadingData(this.catalogFileIdStack[this.catalogFileIdStack.length - 1],'',0);
+                            this.$message({
+                                showClose: true,
+                                message: "上传成功。",
+                                type: "success"
+                            });
+                            //上传成功后重置上传进度条
+                            this.fileFlag = false;
+                            this.uploadPercent = 0;
+                        } else {
+                            this.uploadColor = "#FF4040";
+                            this.uploadStatus = "exception";
+                            this.$message({
+                                showClose: true,
+                                message: "上传失败。",
+                                type: "danger"
+                            });
+                        }
+                        // console.log("response==", response);
+                    })
+                    .catch(message => {
+                        console.log("message======================", message);
+                        this.$message.error("上传失败，请联系管理员");
+                    });
+            },
+            beforeUploadFile(file) {
+                // console.log("进到了上传之前的方法了"+file);
+                const isLt30M = file.size / 1024 / 1024  <= 30;
+                if (!isLt30M) {
+                    this.$message.error('上传的文件大小不能超过30MB哦!');
+                    return false;
+                }
+            },
+            //新建文件夹按钮
+            createFileBtn: function () {
+                this.$prompt('请输入新建文件夹的名称', '提示', {
+                    closeOnClickModal:true,//可以通过点击遮罩关闭 MessageBox
+                    closeOnPressEscape:true,//可通过按下 ESC 键关闭 MessageBox
+                    roundButton:true,//使用圆角按钮
+                    confirmButtonText: '确定',//确认按钮的值
+                    cancelButtonText: '取消',//取消按钮的值
+                    inputValue:'新建文件夹',//input框的默认文字
+                    inputPattern: /^.{2,20}$/, //正则校验文件名
+                    inputErrorMessage: '文件名格式不正确'
+                }).then(({ value }) => {
+                    var _this = this;
+                    //定义创建文件夹的日期
+                    var createFolderTime = moment().format("YYYY-MM-DD HH:mm:ss");
+                    // console.log("filePath为："+this.catalogFileIdStack);
+                    //创建成功后保存到数据库
+                    var newFolderData={
+                        "parentId": (this.catalogFileIdStack[this.catalogFileIdStack.length - 1]),
+                        "fileName": value, //文件名为输入的文件名
+                        "filePath": this.catalogFileIdStack.toString(), //路径为fileId栈存储的内容 toString是为了将数组转换成字符串
+                        "uploadDate": createFolderTime, //需要和上面的添加到表格中的日期保持一致 所以统一用一个参数
+                        "modifyDate": createFolderTime,
+                    };
+                    //新建文件夹方法
+                    axios.post('userNewFolder', newFolderData)
+                        .then(function (res) {
+                            // console.log(res.data.status);
+                            if(res.data.status=="200"){
+                                // 将文件夹推入列表中(不必推  后台刷新就好了)
+                                // this.tableData.unshift(newFolder);
+                                //重载数据 重载的是放入文件Id栈中栈顶的数据作为parentId
+                                _this.loadingData(_this.catalogFileIdStack[_this.catalogFileIdStack.length - 1],'',0);
+                            }else if (res.data.status=="300"){
+                                //自定义回参300 表示文件名重复了
+                                _this.$message({
+                                    type: 'info',
+                                    message: '文件名重复，请重新创建'
+                                });
+                                return;
+                            }
+                            else{
+                                //回参不是200时 表示创建失败
+                                _this.$message({
+                                    type: 'danger',
+                                    message: '创建失败'
+                                });
+                                return;
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                    //提示创建是否成功的信息
+                    this.$message({
+                        type: 'success',
+                        message: '文件夹 '+value +'创建成功'
+                    });//取消创建时提示信息
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '取消创建'
+                    });
+                });
+            },
+            //下载文件按钮
+            downloadBtn: function () {
+                var _self = this;
+                console.log("要下载的文件名:"+_self.selectData[0].fileName);
+                //console.log("要下载的文件类型:"+_self.selectData[0].fileType);
+                //console.log("要下载的文件类型:"+_self.selectData[0]);
+                if(_self.selectData.length>1){
+                    _self.$message({
+                        type: 'danger',
+                        message: '批量下载操作受限'
+                    });
+                    //如果选择下载的文件类型是文件夹
+                }else if(_self.selectData[0].fileType=="1"){
+                    _self.$message({
+                        type: 'danger',
+                        message: '文件夹下载操作受限'
+                    });
+                }else{
+                    //让进度条显示
+                    this.fileFlag = true;
+                    this.uploadPercent='10';
+                    this.uploadPercent='18';
+                    let downloadFileData = new FormData();
+                    this.uploadPercent='25';
+                    downloadFileData.append("fileId",_self.selectData[0].fileId);
+                    downloadFileData.append("fileName",_self.selectData[0].fileName);
+                    this.uploadPercent='30';
+                    this.uploadPercent='35';
+                    axios({
+                        method: 'post',
+                        url: 'fileDownload',
+                        data: downloadFileData,
+                        responseType: 'blob'
+                    }).then(response => {
+                        console.log("文件的大小："+new Blob([response.data]).size);
+                        this.uploadPercent='45';
+                        let url = window.URL.createObjectURL(new Blob([response.data],{type : 'application/octet-stream;charset=utf-8'}));
+                        let link = document.createElement('a');
+                        link.style.display = 'none';
+                        link.href = url;
+                        link.setAttribute('download', _self.selectData[0].fileName);
+                        document.body.appendChild(link);
+                        this.uploadPercent='55';
+                        this.uploadPercent='60';
+                        link.click();
+                        this.uploadPercent='70';
+                        this.uploadPercent='80';
+                        this.uploadPercent='90';
+                        this.uploadPercent='95';
+                        document.body.removeChild(link); //下载完成移除元素
+                        window.URL.revokeObjectURL(url); //释放掉blob对象
+                        this.uploadPercent='100';
+                        //下载成功提示
+                        _self.$message({
+                            type: 'success',
+                            message: '下载成功'
+                        });
+                        //让进度条隐藏
+                        if(this.uploadPercent='100'){
+                            setTimeout(function () {
+                                _self.fileFlag=false;
+                            },800);
+                        }
+                        if (_self.currentMenu=="7"){//如果是在垃圾箱 就显示被删除的
+                            _self.loadingData(_self.catalogFileIdStack[_self.catalogFileIdStack.length - 1],'',1);
+                        } else{
+                            _self.loadingData(_self.catalogFileIdStack[_self.catalogFileIdStack.length - 1],_self.currentMenu,0);
+                        }
+                    }).catch((error) => {
+                        console.log(error);
+                    })
+                }
+
+            },
+            //删除文件按钮
+            deleteBtn: function () {
+                var deleteMethod ='';//动态选择删除方法 1.移至回收站 or 2.彻底删除文件
+                //console.log(typeof (this.currentMenu));
+                //console.log(this.currentMenu);
+                if(this.currentMenu=='7'){//如果当前的菜单栏是回收站中
+                    deleteMethod = "userDeleteFiles";//彻底删除文件
+                }else{
+                    deleteMethod = "deleteFiles"//移至回收站方法
+                }
+                var _self = this;
+                //定义一个栈存放要删除的文件id
+                var deleteFilesIds = [];
+                //遍历选中的文件 将文件id压入栈中
+                if(_self.selectData.length>0){
+                    for (var i = 0; i < _self.selectData.length; i++) {
+                        deleteFilesIds.push(_self.selectData[i].fileId);
+                    }
+                }
+                // console.log("要删除的文件Id:"+deleteFilesIds);
+
+                this.$confirm('此操作将删除该文件及该文件下所有文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios.post(deleteMethod, deleteFilesIds).then(function (res) {
+                        if(res.data.status=="200"){
+                            //console.log("currentMenu的值："+_self.currentMenu);
+                            if(_self.currentMenu==7) {//如果当前的菜单栏是回收站中
+                                _self.loadingData(0,'',1);
+                            }else{
+                                //重载数据 重载的是放入文件Id栈中栈顶的数据作为parentId
+                                _self.loadingData(_self.catalogFileIdStack[_self.catalogFileIdStack.length - 1],_self.currentMenu,0);
+                            }
+                        }else{
+                            _self.$message({
+                                type: 'danger',
+                                message: '删除失败，请重试'
+                            });
+                            return;
+                        }
+                        //删除成功提示
+                        _self.$message({
+                            type: 'success',
+                            message: '删除成功'
+                        });
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            //文件重命名按钮
+            editNameBtn: function () {
+                var _self = this;
+                //修改的文件的名字
+                var updateFileName = _self.selectData[0].fileName;
+                //修改的文件的id
+                var updateFileId = _self.selectData[0].fileId;
+                this.$prompt('请输入新的文件名称', '提示', {
+                    closeOnClickModal:true,//可以通过点击遮罩关闭 MessageBox
+                    closeOnPressEscape:true,//可通过按下 ESC 键关闭 MessageBox
+                    roundButton:true,//使用圆角按钮
+                    confirmButtonText: '确定',//确认按钮的值
+                    cancelButtonText: '取消',//取消按钮的值
+                    inputValue:updateFileName,//input框的默认文字
+                    inputPattern: /^.{2,20}$/, //正则校验文件名
+                    inputErrorMessage: '文件名格式不正确'
+                }).then(({ value }) => {
+                    //如果文件名未修改 直接返回 不访问后台
+                    if(value==updateFileName){
+                        _self.$message({
+                            type: 'info',
+                            message: '文件名未改变'
+                        });
+                        return;
+                    }
+                    //定义文件夹的修改日期
+                    var fileNameModifyTime = moment().format("YYYY-MM-DD HH:mm:ss");
+                    //将修改后的文件名字保存到数据库
+                    var updateFileData={
+                        "parentId": (this.catalogFileIdStack[this.catalogFileIdStack.length - 1]),
+                        "fileName": value, //文件名为输入的文件名
+                        "fileId":updateFileId, //选中的文件的Id
+                        "modifyDate": fileNameModifyTime,//文件修改的时间
+                    };
+                    //修改文件名方法
+                    axios.post('userUpdateFileName', updateFileData)
+                        .then(function (res) {
+                            // console.log(res.data.status);
+                            if(res.data.status=="200"){
+                                //重载数据 重载的是放入文件Id栈中栈顶的数据作为parentId
+                                _self.loadingData(_self.catalogFileIdStack[_self.catalogFileIdStack.length - 1],_self.currentMenu,0);
+                            }else if (res.data.status=="300"){
+                                //自定义回参300 表示文件名重复了
+                                _self.$message({
+                                    type: 'info',
+                                    message: '文件名重复，请重新修改'
+                                });
+                                return;
+                            }
+                            else{
+                                //回参不是200时 表示创建失败
+                                _self.$message({
+                                    type: 'danger',
+                                    message: '文件重命名失败'
+                                });
+                                return;
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                    //提示创建是否成功的信息
+                    this.$message({
+                        type: 'success',
+                        message: '文件重命名成功'
+                    });//取消创建时提示信息
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '取消修改'
+                    });
+                });
+            },
+            //还原文件按钮
+            returnBtn: function(){
+                var _self = this;
+                //定义一个栈存放要删除的文件id
+                var returnedFilesIds = [];
+                //遍历选中的文件 将文件id压入栈中
+                if(_self.selectData.length>0){
+                    for (var i = 0; i < _self.selectData.length; i++) {
+                        returnedFilesIds.push(_self.selectData[i].fileId);
+                    }
+                }
+                this.$confirm('确定还原选中文件?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios.post('userGarbageFiles', returnedFilesIds).then(function (res) {
+                        if(res.data.status=="200"){
+                            _self.loadingData(0,'',1);
+                        }else{
+                            _self.$message({
+                                type: 'danger',
+                                message: '文件还原失败，请重试'
+                            });
+                            return;
+                        }
+                        //还原成功提示
+                        _self.$message({
+                            type: 'success',
+                            message: '文件还原成功'
+                        });
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消还原操作'
+                    });
+                });
+            },
+            // 选中筛选结果时候
+            handleSelectionChange(data) {
+                // console.log(data);
+                //如果一个文件都没有被选中 默认隐藏 下载 删除 重命名 三个按钮
+                if (data == "") {
+                    this.isShow = false; //隐藏下载和删除按钮
+                    this.isShowRenameBtn = false; //隐藏重命名按钮
+                    this.isShowReturnBtn = false; //隐藏还原按钮
+                } else if(data.length==1){
+                    if(this.currentMenu==7){//如果是回收站目录
+                        this.isShow = true;  //显示下载和删除按钮
+                        this.isShowReturnBtn = true; //显示还原按钮
+                    }else{
+                        this.isShow = true;  //显示下载和删除按钮
+                        this.isShowRenameBtn = true; //显示重命名按钮
+                    }
+                } else {
+                    if(this.currentMenu==7){//如果是回收站目录
+                        this.isShow = true;  //显示下载和删除按钮
+                        this.isShowReturnBtn = true; //显示还原按钮
+                    }else{
+                        this.isShow = true;  //显示下载和删除按钮
+                        this.isShowRenameBtn = false; //隐藏重命名按钮
+                    }
+                }
+                this.selectData = data;
+            },
+            // 多选高亮选中行
+            rowClass({row, rowIndex}) {
+                if (this.selectRow.includes(rowIndex)) {
+                    return {"background-color": "rgba(185, 221, 249, 0.75)"}
+                }
+            },
+            //注销登录方法
+            logout(){
+                axios.post('userLogout').then(function (res) {
+                    if (res.data.status=="200"){
+                        window.location.href="user/toLogin";
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+
+        },
+        watch: {
+            selectData(data) {
+                this.selectRow = [];
+                if (data.length > 0) {
+                    data.forEach((item, index) => {
+                        // console.log(this.tableData.indexOf(item));
+                        this.selectRow.push(this.tableData.indexOf(item));
+                    });
+                }
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

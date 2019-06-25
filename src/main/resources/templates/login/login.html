@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html id="myhtml" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <meta content="网盘,网络硬盘,云存储" name="keywords"/>
+    <title>天天网盘</title>
+    <script type="text/javascript">/*<![CDATA[*/
+    location.hash && (location.href = location.href.replace(location.hash, ""));/*]]>*/</script>
+    <script>var DV_ARG = {};
+    DV_ARG.token = "netdisk:" + new Date().getTime() + ":" + Math.random();</script>
+    <link href="/CloudDisk/login/images/favicon.ico" rel="shortcut icon" type="images/x-icon"/>
+    <link href="/CloudDisk/login/css/login-all-min.css" rel="stylesheet" type="text/css"/>
+    <link rel="icon" type="image/x-icon" href="/CloudDisk/images/favicon.ico">
+    <script>
+        //登录表单提交前验证输入框内容
+        function checkForm(){
+            var username = $(document.getElementById("TANGRAM__PSP_4__userName")).val();
+            var password = $(document.getElementById("TANGRAM__PSP_4__password")).val();
+            if(username=="" || password==""){
+                $(document.getElementById("TANGRAM__PSP_4__error")).text("账号或密码不能为空,请重新输入");
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <script th:inline="javascript">
+        var symbol = [[${msg}]];
+        console.log(symbol);
+    </script>
+</head>
+<body>
+<div id="login-container">
+    <div class="ibg-bg index-banner-0"></div>
+    <div class="header-container">
+        <div id="login-header">
+            <div class="logo">
+                <!--<a class="yun-logo" href="//pan.baidu.com/" target="_blank" title="天天网盘">天天网盘</a>-->
+                <a class="pan-logo" href="//pan.baidu.com/" title="网盘">网盘</a>
+            </div>
+            <span class="login-title">
+<a class="b-no-ln" href="javascript:void(0);" id="top_menu_other" target="_blank"></a>
+<span id="departForAd"></span>
+<a class="b-no-ln" hidefocus="true" href="#" target="_blank">天天云首页</a>
+<a class="b-no-ln" hidefocus="true" href="#" id="loginHeadDlink" target="_blank">客户端下载</a>
+<a class="b-no-ln" hidefocus="true" href="#" target="_blank">官方贴吧</a>
+<a class="b-no-ln" hidefocus="true" href="#" target="_blank">官方微博</a>
+<a class="b-no-ln" hidefocus="true" href="#" target="_blank">问题反馈</a>
+<!--<a class="b-no-ln" hidefocus="true" href="https://pan.baidu.com/mall/home?from=login" target="_blank">内容商城</a>-->
+<a class="b-no-ln center-entry" hidefocus="true" href="#"
+   target="_blank">天天云中心</a>
+</span>
+        </div>
+    </div>
+    <div class="login-main">
+        <div class="all-index-banner">
+            <div class="index-body-content">
+                <p><span class="left-quote"></span><span>安全存储</span></p>
+                <p><span>生活井井有条</span><span class="right-quote"></span></p>
+            </div>
+        </div>
+        <div class="all-index-banner hidden">
+            <div class="index-body-content">
+                <p><span class="left-quote"></span><span>在线预览</span></p>
+                <p><span>文件即开即看</span><span class="right-quote"></span></p>
+            </div>
+        </div>
+        <div class="all-index-banner hidden">
+            <div class="index-body-content">
+                <p><span class="left-quote"></span><span>多端并用</span></p>
+                <p><span>数据随身携带</span><span class="right-quote"></span></p>
+            </div>
+        </div>
+        <div class="all-index-banner hidden">
+            <div class="index-body-content">
+                <p><span class="left-quote"></span><span>好友分享</span></p>
+                <p><span>共度幸福时光</span><span class="right-quote"></span></p>
+            </div>
+        </div>
+        <div class="yunbg">
+            <ul class="focus-content clearfix">
+                <li class="focus-content-item"><a class="focus-anchor current" hidefocus="true" href="javascript:"
+                                                  idx="0"></a></li>
+                <li class="focus-content-item"><a class="focus-anchor" hidefocus="true" href="javascript:" idx="1"></a>
+                </li>
+                <li class="focus-content-item"><a class="focus-anchor" hidefocus="true" href="javascript:" idx="2"></a>
+                </li>
+                <li class="focus-content-item"><a class="focus-anchor" hidefocus="true" href="javascript:" idx="3"></a>
+                </li>
+            </ul>
+        </div>
+        <div class="login-sdk-v4">
+            <div class="header-login" style="padding-bottom: 50px;">
+                <div id="login-middle" class="tang-pass-login" style="display: block" ;>
+                    <form id="TANGRAM_PSP_4_form" class="pass-form pass-form-normal" action="/CloudDisk/login" method="POST" autocomplete="off">
+                        <p class="pass-form-logo">账号密码登录</p>
+                            <p id="TANGRAM__PSP_4__errorWrapper" class="pass-generalErrorWrapper">
+                            <span id="TANGRAM__PSP_4__error" class="pass-generalError pass-generalError-error" th:text="${msg}==null?'':'帐号或密码错误，请重新输入'"></span></p>
+                        <p id="TANGRAM__PSP_4__userNameWrapper" class="pass-form-item pass-form-item-userName" style="display:">
+                            <input type="text" style="display:none;">
+                            <input id="TANGRAM__PSP_4__userName" type="text" name="username"
+                                class="pass-text-input pass-text-input-userName open" autocomplete="off" value=""
+                                placeholder="用户名">
+                            <span id="TANGRAM__PSP_4__userName_clearbtn" class="pass-clearbtn pass-clearbtn-userName" style="display: block; visibility: visible; opacity: 1;"></span>
+                            <span id="TANGRAM__PSP_4__userNameTip" class="pass-item-tip pass-item-tip-userName" style="display:none">
+                            <span id="TANGRAM__PSP_4__userNameTipText" class="pass-item-tiptext pass-item-tiptext-userName"></span></span>
+                        <span class="pass-item-selectbtn pass-item-selectbtn-userName"
+                              style="display: none; visibility: hidden; opacity: 1;">
+                        </span>
+                        </p>
+                        <p id="TANGRAM__PSP_4__passwordWrapper" class="pass-form-item pass-form-item-password"
+                           style="display:">
+                            <input type="password" style="display: none;">
+                            <input id="TANGRAM__PSP_4__password" type="password" name="password"
+                                class="pass-text-input pass-text-input-password" autocomplete="off" value=""
+                                placeholder="密码">
+                            <span id="TANGRAM__PSP_4__password_clearbtn" class="pass-clearbtn pass-clearbtn-password" style="display: none; visibility: hidden; opacity: 1;">
+                            </span>
+                            <span
+                                id="TANGRAM__PSP_4__passwordTip" class="pass-item-tip pass-item-tip-password"
+                                style="display:none">
+                            <span id="TANGRAM__PSP_4__passwordTipText" class="pass-item-tiptext pass-item-tiptext-password"></span>
+                            </span>
+                        </p>
+                        <p id="TANGRAM__PSP_4__memberPassWrapper" class="pass-form-item pass-form-item-memberPass">
+                            <input id="TANGRAM__PSP_4__memberPass" type="checkbox" name="memberPass"
+                                   class="pass-checkbox-input pass-checkbox-memberPass" checked="checked">
+                            <label
+                                for="TANGRAM__PSP_4__memberPass" id="TANGRAM__PSP_4__memberPassLabel"
+                                class="">下次自动登录
+                            </label>
+                        </p>
+                        <p id="TANGRAM__PSP_4__submitWrapper" class="pass-form-item pass-form-item-submit">
+                            <input id="TANGRAM__PSP_4__submit" type="submit" onclick="return checkForm();" value="登录" class="pass-button pass-button-submit" style="color: rgb(255, 255, 255);">
+                            <a class="pass-fgtpwd pass-link"
+                                href="https://passport.baidu.com/?getpassindex&amp;tt=1552876231793&amp;gid=960F2DC-248F-4B39-A496-F3C666044333&amp;tpl=netdisk&amp;u=https%3A%2F%2Fpan.baidu.com%2Fdisk%2Fhome"
+                                target="_blank">忘记密码？
+                            </a>
+                            <a class="pass-sms-btn pass-link" href="/CloudDisk/user/toRegister" title="立即注册" data-type="sms" id="TANGRAM__PSP_4__smsSwitchWrapper">立即注册&gt;</a>
+                        </p>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="login-download">
+    <ul class="tab-download clearfix" id="tab-download">
+        <li><a class="windows download-target" hidefocus="true" href="javascript:">Windows</a>
+        </li>
+        <li><a class="android" hidefocus="true" href="javascript:">Android</a></li>
+        <li><a class="iphone" hidefocus="true" href="javascript:" >iPhone</a></li>
+        <li><a class="ipad download-open" hidefocus="true" href="javascript:">iPad</a></li>
+        <li><a class="wp wphone  download-open hidden" hidefocus="true" href="javascript:">WP</a>
+        </li>
+        <li><a class="tongbupan download-target" hidefocus="true" href="javascript:" >MAC</a>
+        </li>
+    </ul>
+</div>
+<div class="footer">
+    <div xmlns="http://www.w3.org/1999/xhtml">©2019 TianTianYun <a class="b-lnk-gy" href="#"
+    >移动开放平台</a> | <a class="b-lnk-gy"
+                     href="#"
+    >服务协议</a> |
+        <a class="b-lnk-gy" href="#">权利声明</a> | <a class="b-lnk-gy"
+                                                   href="#"
+        >版本更新</a>
+        | <a class="b-lnk-gy" href="#">帮助中心</a> | <a class="b-lnk-gy"
+                                                     href="#"
+        >版权投诉</a>
+    </div>
+</div>
+<div class="canvas-bg hidden"></div>
+<div class="qrcode-dialog hidden">
+    <div class="dialog-title">
+        <span>百度网盘客户端下载</span>
+        <a class="close" href="javascript:"></a>
+    </div>
+    <div class="dialog-content android-qrcode">
+    </div>
+    <div class="addon-content">扫描二维码，下载客户端</div>
+    <div class="dialog-footer">
+        <div class="iphone-target dialog-button"><a href="javascript:">前往App store下载</a></div>
+        <div class="android-target dialog-button hidden"><a href="javascript:">立即下载</a></div>
+    </div>
+</div>
+<div style="height:0;width:0"><span class="index-banner-1"></span><span class="index-banner-2"></span><span
+        class="index-banner-3"></span></div>
+<script src="/CloudDisk/login/js/login-all-min.js?t=20140427000" type="text/javascript"></script>
+<script>
+    $(document.getElementById("TANGRAM__PSP_4__userName")).focus(function () {
+        $(document.getElementById("TANGRAM__PSP_4__error")).text("");
+    });
+    $(document.getElementById("TANGRAM__PSP_4__password")).focus(function () {
+        $(document.getElementById("TANGRAM__PSP_4__error")).text("");
+    });
+</script>
+</body>
+</html>
