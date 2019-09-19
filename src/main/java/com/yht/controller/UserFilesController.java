@@ -288,8 +288,8 @@ public class UserFilesController {
         if (userId!=null && userId!=""){
             int belongId = Integer.valueOf(userId+"");
             Map downLoadFileInfo = userFilesService.getDownLoadFileInfo(belongId, Integer.valueOf((fileId + "")));
-//            downloadFile = FileUpAndDown.downloadFile("39.96.8.65", 21, "ftpadmin",
-////                    "ziqingkeshi", "/home/ftpadmin/cloudDisk",
+//            downloadFile = FileUpAndDown.downloadFile("ip地址", 21, "ftp用户名",
+////                    "ftp密码", "/home/ftpadmin/cloudDisk",
 ////                    (downLoadFileInfo.get("fileName") + ""), fileName);//此处最后不用加/ 方法中加了/
             downloadFile = testDownload((downLoadFileInfo.get("fileName") + ""));
             if(downloadFile != null) {
