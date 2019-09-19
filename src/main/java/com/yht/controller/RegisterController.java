@@ -122,8 +122,8 @@ public class RegisterController {
     @ResponseBody
     @RequestMapping("/testCity")
     public String test(String path[]) throws Exception {
-        String myappid = "76850";
-        String mySecret = "0ab21f4ab73948298c21eca77e461046";
+        String myappid = "myappid";
+        String mySecret = "mySecret";
         URL u = new URL("http://route.showapi.com/238-1?showapi_appid=" + myappid + "&address=郑州大学&city=郑州&showapi_sign=" + mySecret);
         InputStream in = u.openStream();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -151,7 +151,7 @@ public class RegisterController {
     @RequestMapping("/getMessage")
     @ResponseBody
     public String get() {
-        String res = (new ShowApiRequest("http://route.showapi.com/28-2", "76850", "0ab21f4ab73948298c21eca77e461046"))
+        String res = (new ShowApiRequest("http://route.showapi.com/28-2", "myappid", "mySecret"))
                 .addTextPara("content", "尊敬的用户您好!您本次的验证码是:[code],有效时间为3分钟!")
                 .addTextPara("title", "天天云盘")
                 .post();
@@ -166,11 +166,11 @@ public class RegisterController {
     @RequestMapping("/alterMould")
     @ResponseBody
     public String alterModule() {
-        String res = (new ShowApiRequest("http://route.showapi.com/28-10", "76850", "0ab21f4ab73948298c21eca77e461046"))
+        String res = (new ShowApiRequest("http://route.showapi.com/28-10", "myappid", "mySecret"))
                 .addTextPara("content", "尊敬的用户您好!您本次的验证码是:[code],有效时间为3分钟!")
                 .addTextPara("title", "天天云盘")
                 .addTextPara("tNum", "T170317003567")
-                .addTextPara("notiPhone", "13592535690")
+                .addTextPara("notiPhone", "电话")
                 .post();
         return res;
     }
@@ -181,7 +181,7 @@ public class RegisterController {
     @RequestMapping("/getMould")
     @ResponseBody
     public String modelOk() {
-        String res = (new ShowApiRequest("http://route.showapi.com/28-3", "76850", "0ab21f4ab73948298c21eca77e461046"))
+        String res = (new ShowApiRequest("http://route.showapi.com/28-3", "myappid", "mySecret"))
                 .addTextPara("nomalTemplate", "2")
                 .post();
         return res;
@@ -197,7 +197,7 @@ public class RegisterController {
     public Map sendMessage(@RequestParam String phone, HttpSession session) {
         int randomNum = (int) ((Math.random() * 9 + 1) * 100000);
         Map tempMap = new HashMap();
-        String res = (new ShowApiRequest("http://route.showapi.com/28-1", "76850", "0ab21f4ab73948298c21eca77e461046"))
+        String res = (new ShowApiRequest("http://route.showapi.com/28-1", "myappid", "mySecret"))
                 .addTextPara("mobile", phone)
                 .addTextPara("content", "{\"name\":\"严浩天\",\"code\":\"" + randomNum + "\",\"minute\":\"3\"}")
                 .addTextPara("tNum", "T170317004205")
@@ -258,7 +258,7 @@ public class RegisterController {
     @RequestMapping("/deleteMould")
     @ResponseBody
     public String deleteMould() {
-        String res = (new ShowApiRequest("http://route.showapi.com/28-9", "76850", "3ae9b0a4bcb346dabeca64447a7406f4"))
+        String res = (new ShowApiRequest("http://route.showapi.com/28-9", "myappid", "mySecret"))
                 .addTextPara("tNum", "T170317003566")
                 .post();
         return res;
