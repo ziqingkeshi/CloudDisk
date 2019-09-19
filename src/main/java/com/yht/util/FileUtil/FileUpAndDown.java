@@ -66,9 +66,9 @@ public class FileUpAndDown {
         String newFileName = null;
         try {
             //连接ftp服务器
-            ftp.connect("39.96.8.65",21);
+            ftp.connect("ip",21);
             //登录
-            ftp.login("ftpadmin","ziqingkeshi");
+            ftp.login("ftp用户名","ftp密码");
             //设置上传路径
             String path = "/home/ftpadmin/cloudDisk";
             //检查上传路径是否存在 如果不存在返回false
