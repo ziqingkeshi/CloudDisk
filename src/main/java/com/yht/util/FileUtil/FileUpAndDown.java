@@ -24,7 +24,7 @@ import java.util.UUID;
  * 第七步，读取要上传的本地文件路径，同时创建输入流
  * 第八步，用客户端上传本地文件，参数设置文件名跟输入流
  * 第九步，处理异常，关闭文件流，断开服务器连接。
- * Author:严浩天
+ * Author:yanht
  * CreateTime:2019-04-12 14:38
  */
 @Component
