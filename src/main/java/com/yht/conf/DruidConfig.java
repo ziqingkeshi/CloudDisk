@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * className:DruidConfig
  * description:
  * Druid是一款优秀的数据库连接池。Druid能够提供强大的数据库监控和扩展功能
- * author:严浩天
+ * author:yanht
  * createTime:2018-11-23 16:04
  */
 @Configuration//@Configuration标注在类上，相当于把该类作为spring的xml配置文件中的<beans>，作用为：配置spring容器(应用上下文)
